@@ -19,7 +19,7 @@
 
 #include <limits>
 
-#include "dll/dll/settings.h"  
+#include "dll/settings.h"  
 #include <curl/curl.h>
 
 PlaytimeCounter::PlaytimeCounter(Local_Storage* local_storage, Settings* settings)  
