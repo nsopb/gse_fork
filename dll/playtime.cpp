@@ -19,6 +19,9 @@
 
 #include <limits>
 
+#include "dll/dll/settings.h"  
+#include <curl/curl.h>
+
 PlaytimeCounter::PlaytimeCounter(Local_Storage* local_storage)
    : local_storage(local_storage), last_tick(std::chrono::steady_clock::now())
 {
