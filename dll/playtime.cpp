@@ -22,10 +22,10 @@
 #include "dll/dll/settings.h"  
 #include <curl/curl.h>
 
-PlaytimeCounter::PlaytimeCounter(Local_Storage* local_storage)
-   : local_storage(local_storage), last_tick(std::chrono::steady_clock::now())
-{
-    load();
+PlaytimeCounter::PlaytimeCounter(Local_Storage* local_storage, Settings* settings)  
+   : local_storage(local_storage), settings(settings), last_tick(std::chrono::steady_clock::now())  
+{  
+    load();  
 }
 
 PlaytimeCounter::~PlaytimeCounter()
@@ -90,12 +90,42 @@ void PlaytimeCounter::load()
     initialized = true;
 }
 
-void PlaytimeCounter::save()
-{
-    std::lock_guard<std::mutex> lock(mutex);
+void PlaytimeCounter::save()  
+{  
+    std::lock_guard<std::mutex> lock(mutex);  
+  
+    std::string data = std::to_string(playtime_seconds);  
+    local_storage->store_data("", playtime_filename, data.data(), static_cast<unsigned int>(data.size()));  
+      
+    send_to_api();  
+}
 
-    std::string data = std::to_string(playtime_seconds);
-    local_storage->store_data("", playtime_filename, data.data(), static_cast<unsigned int>(data.size()));
+void PlaytimeCounter::send_to_api()  
+{  
+    if (!settings || !settings->send_playtime_to_api) return;  
+      
+    CURL* curl = curl_easy_init();  
+    if (!curl) return;  
+      
+    uint32_t appid = settings->get_local_game_id().AppID();  
+    std::string json_data = "{\"appid\":" + std::to_string(appid) +   
+                           ",\"user_id\":" + std::to_string(settings->playtime_api_user_id) +   
+                           ",\"playtime_seconds\":" + std::to_string(playtime_seconds) + "}";  
+      
+    struct curl_slist* headers = nullptr;  
+    headers = curl_slist_append(headers, "Content-Type: application/json");  
+      
+    curl_easy_setopt(curl, CURLOPT_URL, settings->playtime_api_endpoint.c_str());  
+    curl_easy_setopt(curl, CURLOPT_POST, 1L);  
+    curl_easy_setopt(curl, CURLOPT_POSTFIELDS, json_data.c_str());  
+    curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);  
+    curl_easy_setopt(curl, CURLOPT_TIMEOUT, 5L);  
+    curl_easy_setopt(curl, CURLOPT_NOSIGNAL, 1L);  
+      
+    curl_easy_perform(curl);  
+      
+    curl_slist_free_all(headers);  
+    curl_easy_cleanup(curl);  
 }
 
 uint64_t PlaytimeCounter::seconds() const
