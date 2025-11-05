@@ -165,7 +165,7 @@ Steam_Client::Steam_Client()
     PRINT_DEBUG("init AppTicket");
     steam_app_ticket = new Steam_AppTicket(settings_client);
 
-    playtime_counter = new PlaytimeCounter(local_storage);
+    playtime_counter = new PlaytimeCounter(local_storage, settings_client);
 
     gameserver_has_ipv6_functions = false;
     steamclient_version = 6; // default for C exports
