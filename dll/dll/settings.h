@@ -297,6 +297,11 @@ public:
     // whether to record playtime
     bool record_playtime = false;
 
+    // playtime API settings  
+    bool send_playtime_to_api = false;  
+    std::string playtime_api_endpoint = "http://localhost/api/playtime";  
+    uint32_t playtime_api_user_id = 1;
+
     // bypass to make SetAchievement() always return true, prevent some games from breaking
     bool achievement_bypass = false;
 
