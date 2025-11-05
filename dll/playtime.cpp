@@ -136,6 +136,8 @@ void PlaytimeCounter::send_to_api()
     curl_easy_setopt(curl, CURLOPT_TIMEOUT, 5L);  
     curl_easy_setopt(curl, CURLOPT_NOSIGNAL, 1L);  
       
+    curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, 0L);  
+      
     CURLcode res = curl_easy_perform(curl);  
     PRINT_DEBUG("send_to_api: curl_easy_perform() result: %d (%s)", res, curl_easy_strerror(res));  
       
