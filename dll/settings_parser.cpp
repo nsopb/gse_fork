@@ -1599,6 +1599,15 @@ static void parse_stats_features(class Settings *settings_client, class Settings
 
     settings_client->record_playtime = ini.GetBoolValue("main::stats", "record_playtime", settings_client->record_playtime);
     settings_server->record_playtime = ini.GetBoolValue("main::stats", "record_playtime", settings_server->record_playtime);
+
+    settings_client->send_playtime_to_api = ini.GetBoolValue("main::stats", "send_playtime_to_api", false);  
+    settings_server->send_playtime_to_api = ini.GetBoolValue("main::stats", "send_playtime_to_api", false);  
+      
+    settings_client->playtime_api_endpoint = ini.GetValue("main::stats", "playtime_api_endpoint", "http://localhost/api/playtime");  
+    settings_server->playtime_api_endpoint = ini.GetValue("main::stats", "playtime_api_endpoint", "http://localhost/api/playtime");  
+      
+    settings_client->playtime_api_user_id = static_cast<uint32_t>(ini.GetLongValue("main::stats", "playtime_api_user_id", 1));  
+    settings_server->playtime_api_user_id = static_cast<uint32_t>(ini.GetLongValue("main::stats", "playtime_api_user_id", 1));
 }
 
 
